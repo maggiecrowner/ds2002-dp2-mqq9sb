@@ -4,6 +4,7 @@ from pymongo import MongoClient, errors
 from bson.json_util import dumps
 import os
 import json
+from json.decoder import JSONDecodeError
 
 MONGOPASS = os.getenv('MONGOPASS')
 uri = "mongodb+srv://cluster0.pnxzwgz.mongodb.net/"
@@ -13,17 +14,17 @@ collection = db.project
 
 path = "/workspace/ds2002-dp2-mqq9sb/data"
 
+
 def insert_data(data):
     try:
         if isinstance(file_data, list):
             collection.insert_many(file_data)
-    except Exception:
-        print(f"Error - {f}")  
-    else:
-        try:
+        elif isinstance(file_data, dict):
             collection.insert_one(file_data)
-        except Exception:
-            print(f"Error - {f}")
+    except JSONDecodeError:
+        print(f"Corrupted - {f}")
+    except Exception:
+        print(f"Not imported - {f}")
 
 
 for (root, dirs, file) in os.walk(path):
@@ -32,3 +33,4 @@ for (root, dirs, file) in os.walk(path):
             file_data = json.load(dat)
             insert_data(file_data)
             continue
+
