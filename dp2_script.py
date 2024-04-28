@@ -14,23 +14,15 @@ collection = db.project
 
 path = "/workspace/ds2002-dp2-mqq9sb/data"
 
-
-def insert_data(data):
-    try:
-        if isinstance(file_data, list):
-            collection.insert_many(file_data)
-        elif isinstance(file_data, dict):
-            collection.insert_one(file_data)
-    except JSONDecodeError:
-        print(f"Corrupted - {f}")
-    except Exception:
-        print(f"Not imported - {f}")
-
-
 for (root, dirs, file) in os.walk(path):
     for f in file:
         with open(path+'/'+f, 'r') as dat:
-            file_data = json.load(dat)
-            insert_data(file_data)
-            continue
-
+            try:
+                file_data = json.load(dat)
+                if isinstance(file_data, list):
+                    collection.insert_many(file_data)
+                elif isinstance(file_data, dict):
+                    collection.insert_one(file_data)
+            except json.JSONDecodeError:
+                print(f"Corrupted - {f}")
+        continue
