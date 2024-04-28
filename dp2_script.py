@@ -16,13 +16,18 @@ path = "/workspace/ds2002-dp2-mqq9sb/data"
 
 for (root, dirs, file) in os.walk(path):
     for f in file:
-        with open(path+'/'+f, 'r') as dat:
-            try:
-                file_data = json.load(dat)
-                if isinstance(file_data, list):
-                    collection.insert_many(file_data)
-                elif isinstance(file_data, dict):
-                    collection.insert_one(file_data)
-            except json.JSONDecodeError:
-                print(f"Corrupted - {f}")
-        continue
+        try:
+            with open(path+'/'+f, 'r') as dat:
+                try:
+                    file_data = json.load(dat)
+                    if isinstance(file_data, list):
+                        collection.insert_many(file_data)
+                    elif isinstance(file_data, dict):
+                        collection.insert_one(file_data)
+                except Exception:
+                    print(f"Corrupted - {f}")
+                    continue
+        except Exception:
+            print(f"Not imported - {f}")
+
+print(collection.count_documents({}))
