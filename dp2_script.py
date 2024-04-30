@@ -24,7 +24,7 @@ for (root, dirs, file) in os.walk(path):
                         collection.insert_many(file_data)
                     elif isinstance(file_data, dict):
                         collection.insert_one(file_data)
-                except Exception:
+                except JSONDecodeError:
                     print(f"Corrupted - {f}")
                     continue
         except Exception:
